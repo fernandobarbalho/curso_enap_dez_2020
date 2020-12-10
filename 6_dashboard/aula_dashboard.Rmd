@@ -1,0 +1,60 @@
+---
+title: "Experiência com Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(shiny)
+
+dados_metro_sudeste <- read_csv("Interface com RSiconfi.csv")
+
+```
+
+Inputs {.sidebar}
+-------------------------------------
+
+```{r}
+# shiny inputs defined here
+selectInput("ano","Informe um ano", choices= 2018:2019, selected =  2019)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+Esse é gráfico Chart A
+
+```{r}
+
+#Num dashboard com shiny, para se ter acesso às possibilidades de interação as saídas devem estar dentro de uma função do tipo render, tais como renderPlot
+renderPlot({
+  
+  
+  dados_metro_sudeste %>%
+  filter(AN_EXERCICIO == input$ano ) %>% #dinamicamente o ano pode ser trocado a partir da informação que é dado em input$ano, que vem do input side bar
+  group_by(AN_EXERCICIO, SG_ENTE, NO_ENTE,funcao
+           
+           ) %>%
+  summarise(
+    valor_gasto = sum(VALUE)
+  ) %>%
+  ungroup() %>% #logo após os agrupamentos deve-se fazer o ungroup para executar operações de slice e ordenamento
+  slice_max(order_by = valor_gasto, n=20) %>%
+  mutate(NO_ENTE = reorder(NO_ENTE, valor_gasto)) %>%
+  ggplot(aes(x=valor_gasto, y=NO_ENTE, fill=SG_ENTE )) + 
+  geom_col()
+
+  
+})
+
+  
+
+```
+
